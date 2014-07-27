@@ -65,7 +65,7 @@ class GUI:
         self.image_owner_field = Entry(window)
         self.image_owner_field.pack()
 
-        image_id_label = Label(window, text='Enter image ID:')
+        image_id_label = Label(window, text='Enter image ID (Please enter at least 3 numberic values for image ID):')
         image_id_label.pack()
         self.image_id_field = Entry(window)
         self.image_id_field.pack()
@@ -95,27 +95,44 @@ class GUI:
         #waiting for user input - event driven program
         window.mainloop()
 
-
     def doSubmit(self):
+
+        #test uniqueness of each school name entered u
+        noduplicate = True;
+
+        for record in self.recordlist:
+            if self.image_id_field.get() == record.get_image_id():
+                noduplicate= False
+                tkinter.messagebox.showwarning('Warning!','Duplicate Image ID.');
+                print('Please enter Image ID again.');
+            elif self.image_filename_field.get() == record.get_image_filename():
+                noduplicate= False
+                tkinter.messagebox.showwarning('Warning!','Duplicate Image Filename.');
+                print('Please enter Image Filename again.');
+
+        if noduplicate == True:
         #this is the callback method for the 'Submit' button
-        if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_field.get()) <1 or len(self.image_licence_type_field.get()) <1:
+            if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_field.get()) <1 or len(self.image_licence_type_field.get()) <1:
                 tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields.')
+            elif len(self.image_id_field.get()) < 3:
+                tkinter.messagebox.showwarning('Warning!','Please enter at least 3 numberic values for image ID.')
 
-        else:
-            try:
-                validated_image_id = int(self.image_id_field.get())
-                self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get(), self.image_owner_field.get(), self.image_licence_type_field.get()))
-                self.ready_to_write= True
-                tkinter.messagebox.showinfo('Notice','Submission Sucessful!')
+            else:
+                try:
+                    validated_image_id = int(self.image_id_field.get())
+                    self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get() , self.image_owner_field.get(), self.image_licence_type_field.get()))
+                    self.ready_to_write= True
+                    tkinter.messagebox.showinfo('Notice','Submission Sucessful.')
 
-                self.image_id_field.delete(0, END) #command to clear field
-                self.image_filename_field.delete(0, END)
-                self.image_title_field.delete(0, END)
-                self.image_owner_field.delete(0, END)
+                    self.image_id_field.delete(0, END) #command to clear field
+                    self.image_filename_field.delete(0, END)
+                    self.image_title_field.delete(0, END)
+                    self.image_owner_field.delete(0, END)
 
-            except:
-                tkinter.messagebox.showwarning('Warning!','Please enter a numeric number for image ID.')
-                print('Please enter a numeric number for image ID.')
+                except ValueError:
+                    tkinter.messagebox.showwarning('Warning!','Please enter numeric image ID.')
+                    print('Please enter numeric image ID.')
+
 
 
     def writetocsv(self):
@@ -124,7 +141,9 @@ class GUI:
         file_name = 'image_database.txt'
 
         if self.ready_to_write: #cheacks data has been previously validated
-            ofile = open(file_name, 'a') #open with write('w') or append('a') privelages
+            ofile = open(file_name, 'w') #open with write('w') or append('a') privelages
+            writer = csv.writer(ofile, delimiter=',')
+
             writer = csv.writer(ofile, delimiter=',')
             #cycles through list of records created by gui
             for record in self.recordlist:
@@ -133,10 +152,10 @@ class GUI:
             #explicitly closes the output file
             ofile.close()
         else:
-            tkinter.messagebox.showwarning('Error!', 'You need to Validate your data')
+            tkinter.messagebox.showwarning('Error!', 'You need to Validate your data.')
 
         self.ready_to_write= False
-        tkinter.messagebox.showinfo('Notice',file_name+' File Generated Sucessfully')
+        tkinter.messagebox.showinfo('Notice',file_name+' File Generated Sucessfully!')
 
 #initialises the programme
 GUI()
