@@ -17,10 +17,10 @@ import tkinter.messagebox
 
 class Image:
     def __init__(self, image_id, image_filename, image_title, image_owner, image_licence_type):
-        self.image_id = image_id
-        self.image_filename = image_filename
         self.image_title = image_title
         self.image_owner = image_owner
+        self.image_id = image_id
+        self.image_filename = image_filename
         self.image_licence_type = image_licence_type
 
     def get_image_id(self):
@@ -75,10 +75,10 @@ class GUI:
         self.image_filename_field = Entry(window)
         self.image_filename_field.pack()
 
-        image_licence_type_label = Label(window, text='Enter image licence type:')
+        image_licence_type_label = Label(window, text='Select image licence type:')
         image_licence_type_label.pack()
-        self.image_licence_type_field = Entry(window)
-        self.image_licence_type_field.pack()
+        self.image_licence_type_field = StringVar()
+        OptionMenu(window, self.image_licence_type_field, "Attribuution (BY)", "Share-alike (SA)", "Non-commercial (NC)", "No Derivative Works (ND)").pack()
 
         #creates a button. The command function is run when the button is pressed
         #the 'command=self.doSubmit' is an example of a callback method
@@ -97,6 +97,7 @@ class GUI:
 
 
     def doSubmit(self):
+        #this is the callback method for the 'Submit' button
         if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_field.get()) <1 or len(self.image_licence_type_field.get()) <1:
                 tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields.')
 
@@ -111,7 +112,7 @@ class GUI:
                 self.image_filename_field.delete(0, END)
                 self.image_title_field.delete(0, END)
                 self.image_owner_field.delete(0, END)
-                self.image_licence_field.delete(0, END)
+
             except:
                 tkinter.messagebox.showwarning('Warning!','Please enter a numeric number for image ID.')
                 print('Please enter a numeric number for image ID.')
