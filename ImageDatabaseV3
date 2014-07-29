@@ -1,0 +1,157 @@
+#-------------------------------------------------------------------------------
+# Name:        Image Assessment
+# Purpose:     capture information of images
+#
+# Author:      huangc
+#
+# Created:     23/07/2014
+# Copyright:   (c) huangc 2014
+# Licence:     CCL
+#-------------------------------------------------------------------------------
+#!/usr/bin/env python
+#import GUI library
+import os
+from tkinter import *
+
+#for Python V3 you must explicitely load the messagebox
+import tkinter.messagebox
+
+class Image:
+    def __init__(self, image_id, image_filename, image_title, image_owner, image_licence_type):
+        self.image_title = image_title
+        self.image_owner = image_owner
+        self.image_id = image_id
+        self.image_filename = image_filename
+        self.image_licence_type = image_licence_type
+
+    def get_image_id(self):
+        return self.image_id
+
+    def get_image_filename(self):
+        return self.image_filename
+
+    def get_image_title(self):
+        return self.image_title
+
+    def get_image_owner(self):
+        return self.image_owner
+
+    def get_image_licence_type(self):
+        return self.image_licence_type
+
+class GUI:
+
+    def __init__(self):
+
+        # similar to root in other texts
+        window = Tk()
+        window.title("Data Entry Screen")
+        #setting root window and size
+        window.minsize(width=400, height=200)
+
+        #INITIALIZATION VARIABLES
+        #this variable stores whether the data has been validated or not
+        self.ready_to_write = False
+        #this will contain the list of all books entered via the gui
+        self.recordlist = []
+
+        #creating label and field variable in GUI for each entry field
+        image_title_label = Label(window, text='Enter image title:')
+        image_title_label.pack() #.pack() places the component in the window
+        self.image_title_field = Entry(window)
+        self.image_title_field.pack()
+
+        image_owner_label = Label(window, text='Enter owner of image:')
+        image_owner_label.pack()
+        self.image_owner_field = Entry(window)
+        self.image_owner_field.pack()
+
+        image_id_label = Label(window, text='Enter image ID (Please enter at least 3 numberic values for image ID):')
+        image_id_label.pack()
+        self.image_id_field = Entry(window)
+        self.image_id_field.pack()
+
+        image_filename_label = Label(window, text='Enter image filename:')
+        image_filename_label.pack()
+        self.image_filename_field = Entry(window)
+        self.image_filename_field.pack()
+
+        image_licence_type_label = Label(window, text='Select image licence type:')
+        image_licence_type_label.pack()
+        self.image_licence_type_field = StringVar()
+        OptionMenu(window, self.image_licence_type_field, "Attribuution (BY)", "Share-alike (SA)", "Non-commercial (NC)", "No Derivative Works (ND)").pack()
+
+        #creates a button. The command function is run when the button is pressed
+        #the 'command=self.doSubmit' is an example of a callback method
+        submit_button_label = Label(window, text='Press to validate:')
+        submit_button = Button(window, text='Submit', command=self.doSubmit)
+
+        csv_button_label = Label(window, text='Convert Record to csv')
+        csv_button = Button(window, text='write to csv', command=self.writetocsv)
+        submit_button_label.pack()
+        submit_button.pack()
+        csv_button_label.pack()
+        csv_button.pack()
+
+        #waiting for user input - event driven program
+        window.mainloop()
+
+    def doSubmit(self):
+
+        #test uniqueness of each school name entered u
+        noduplicate = True;
+
+        for record in self.recordlist:
+            if self.image_id_field.get() == record.get_image_id():
+                noduplicate= False
+                tkinter.messagebox.showwarning('Warning!','Duplicate Image ID.');
+                print('Please enter Image ID again.');
+
+        if noduplicate == True:
+        #this is the callback method for the 'Submit' button
+            if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_field.get()) <1 or len(self.image_licence_type_field.get()) <1:
+                tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields.')
+            elif len(self.image_id_field.get()) < 3:
+                tkinter.messagebox.showwarning('Warning!','Please enter at least 3 numberic values for image ID.')
+
+            else:
+                try:
+                    validated_image_id = int(self.image_id_field.get())
+                    self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get() , self.image_owner_field.get(), self.image_licence_type_field.get()))
+                    self.ready_to_write= True
+                    tkinter.messagebox.showinfo('Notice','Submission Sucessful.')
+
+                    self.image_id_field.delete(0, END) #command to clear field
+                    self.image_filename_field.delete(0, END)
+                    self.image_title_field.delete(0, END)
+                    self.image_owner_field.delete(0, END)
+
+                except ValueError:
+                    tkinter.messagebox.showwarning('Warning!','Please enter numeric image ID.')
+                    print('Please enter numeric image ID.')
+
+
+
+    def writetocsv(self):
+        #this is the callback method for the 'write to csv' button
+        import csv
+        file_name = 'image_database.txt'
+
+        if self.ready_to_write: #cheacks data has been previously validated
+            ofile = open(file_name, 'a') #open with write('w') or append('a') privelages
+            writer = csv.writer(ofile, delimiter=',')
+            #cycles through list of records created by gui
+            for record in self.recordlist:
+                print(record.get_image_id())
+                writer.writerow([record.get_image_id(),record.get_image_filename(), record.get_image_title(), record.get_image_owner(), record.get_image_licence_type()])
+            #explicitly closes the output file
+            ofile.close()
+        else:
+            tkinter.messagebox.showwarning('Error!', 'You need to Validate your data')
+
+        self.ready_to_write= False
+        tkinter.messagebox.showinfo('Notice',file_name+' File Generated Sucessfully!')
+
+#initialises the programme
+GUI()
+
