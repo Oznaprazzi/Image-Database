@@ -1,0 +1,135 @@
+#-------------------------------------------------------------------------------
+# Name:        module1
+# Purpose:
+#
+# Author:      huangc
+#
+# Created:     26/05/2014
+# Copyright:   (c) huangc 2014
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+#!/usr/bin/env python
+
+class Image:
+    def __init__(self, image_title, image_owner, image_filename, image_id, image_licence_type):
+        self.image_id = image_id
+        self.image_filename = image_filename
+        self.image_title = image_title
+        self.image_owner = image_owner
+        self.image_licence_type = image_licence_type
+
+    def get_image_id(self):
+        return self.image_id
+
+    def get_image_filename(self):
+        return self.image_filename
+
+    def get_image_title(self):
+        return self.image_title
+
+    def get_image_owner(self):
+        return self.image_owner
+
+    def get_image_licence_type(self):
+        return self.image_licence_type
+
+    def show_info(self):
+            """
+            >>> im = Image("Oznaprazzi", "Casey Huang", "oznaprazzi.jpg", 125, "CCL")
+            >>> im.show_info()
+            Image Title: Oznaprazzi
+            Image Owner: Casey Huang
+            Image Filename: oznaprazzi.jpg
+            Image ID: 125
+            Image Licence Type: CCL
+            """
+            str_form="Image Title: {}\nImage Owner: {}\nImage Filename: {}\nImage ID: {}\nImage Licence Type: {}"
+            print(str_form.format(self.image_title, self.image_owner, self.image_filename, self.image_id, self.image_licence_type))
+
+def collect_data():
+    global image_id
+    global image_filename
+    global image_title
+    global image_owner
+    global image_licence_type
+
+    image_id=0
+    image_filename=""
+    image_title=""
+    image_owner=""
+    image_licence_type=""
+
+    while len(image_title) <1:
+        image_title = input("Enter image title:").title()
+        if len(image_title) <1:
+            print("Enter image title:")
+
+    while len(image_owner) <1:
+        image_owner = input("Enter owner of image:").title()
+        if len(image_owner) <1:
+            print("Enter owner of image:")
+
+    while len(image_filename) <1:
+        image_filename = input("Enter image filename:").title()
+        if len(image_filename) <1:
+            print("Enter image filename:")
+
+    while True:
+        try:
+            image_id = int(input("Enter image ID (at least 3 numbers):"))
+            if len(str(image_id)) < 3:
+                print ("Please enter numberic image ID (at least 3 numbers):")
+            else:
+                break
+        except ValueError:
+            print ("Please enter numberic image ID (at least 3 numbers):")
+
+    while len(image_licence_type) <1:
+        image_licence_type = input("Enter image licence type:").title()
+        if len(image_licence_type) <1:
+            print("Enter image licence type:")
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod(verbose = True)
+    cont="y"
+    images = []
+    while cont=="y":
+        while True:
+            try:
+                repeat = int(input("How many image details do you want to enter?"))
+                if repeat<0:
+                    print ("How many image details do you want to enter?")
+                else:
+                    break
+            except ValueError:
+                print ("How many image details do you want to enter?")
+        else:
+                break
+
+
+        for i in range(repeat):
+            collect_data()
+            images.append(Image(image_id, image_filename, image_title, image_owner, image_licence_type))
+        for Image in images:
+            Image.show_info()
+
+        while True:
+            cont=input("Do you want to enter more image details? (Please enter 'y' or'n')")
+            if cont not in ("n", "y"):
+                print("Please enter 'y' or 'n'")
+            else:
+                break
+
+import csv #imports csv format
+file_name = 'imagedb.txt' #sets up school database file name and saves it as a txt file
+
+ofile = open(file_name, 'w') #open with write('w') or append('a') privelages
+writer = csv.writer(ofile, delimiter=',') #separates values with commas
+
+for i in range (0, len(images)):
+
+    writer.writerow([images[i].image_id, images[i].image_filename, images[i].image_title, images[i].image_owner, images[i].image_licence_type])
+#explicitly closes the output file
+ofile.close()
