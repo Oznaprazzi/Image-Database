@@ -45,7 +45,7 @@ class GUI:
 
         # similar to root in other texts
         window = Tk()
-        window.title("Data Entry Screen")
+        window.title("Data Entry For Images Data")
         #setting root window and size
         window.minsize(width=400, height=200)
 
