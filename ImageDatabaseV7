@@ -138,6 +138,9 @@ class GUI:
                 tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields.')
             elif len(self.image_id_field.get()) < 3:
                 tkinter.messagebox.showwarning('Warning!','Please enter at least 3 numberic values for image ID.')
+            #limits the user's input to 25 characters for image filename, image title and image owner
+            elif len(fn) > 25 or len(self.image_title_field.get()) > 25  or len(self.image_owner_field.get()) > 25:
+                tkinter.messagebox.showwarning('Warning!','Please enter less than 25 characters for image filename, image title and image owner.')
 
             #only accepts the most common image file extentsions so that it is more easy to validate as users may input unacceptable image file extensions such as ".fjgl" or ".323j" etc.
             elif ext not in (".bmp", ".gif", ".jpg", ".png", ".psd", ".pspimage", ".thm", ".tif", ".yuv", ".ai", ".drw", ".eps", ".ps", ".svg", ".jpeg"):
@@ -155,7 +158,7 @@ class GUI:
 
                     self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get() , self.image_owner_field.get(), self.image_licence_type_field.get()))
                     self.ready_to_write = True
-                    self.csv = self.csv_field.get()
+                    self.csvfile = self.csv_field.get() #stores the self.csv_field.get() data before it is deleted
                     tkinter.messagebox.showinfo('Notice','Submission Sucessful.')
 
                     self.image_id_field.delete(0, END) #command to clear field
@@ -193,9 +196,10 @@ class GUI:
         else:
             tkinter.messagebox.showwarning('Error!', 'You need to Validate your data')
 
-        if self.ready_to_write and self.csv == "yes":
+        #only shows when data has been validated
+        if self.ready_to_write and self.csvfile == "yes":
             tkinter.messagebox.showinfo('Notice',file_name+' File Generated Sucessfully!') #shows message if the user wants to create a new file
-        elif self.ready_to_write and self.csv == "no":
+        elif self.ready_to_write and self.csvfile == "no":
             tkinter.messagebox.showinfo('Notice', 'Data added to '+file_name+' Sucessfully!') #shows message if the user does not want to create a new file but add the data to the existing file
 
 #initialises the programme
