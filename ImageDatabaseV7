@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 # Name:        Image Assessment
-# Purpose:     capture information of images
+# Purpose:     captures information of images then converts to CSV file
 #
 # Author:      huangc
 #
