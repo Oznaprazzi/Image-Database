@@ -135,7 +135,7 @@ class GUI:
 
         if noduplicate == True:
 
-            self.filenames = [self.image_filename_field.get()]
+            self.filenames = [self.image_filename_field.get()] #creates list of all image filenames entered so that the next code below is able to splits up the extension from the filename
 
             for fn in self.filenames:
             # Splits the extension from the path and normalise it to lowercase, so the file extension can be validated.
