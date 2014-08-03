@@ -18,9 +18,10 @@ from tkinter import *
 import tkinter.messagebox
 
 class Image:
-    def __init__(self, image_id, image_filename, image_title, image_owner, image_licence_type):
+    def __init__(self, image_id, image_filename, image_title, image_owner_fn, image_owner_ln, image_licence_type):
         self.image_title = image_title
-        self.image_owner = image_owner
+        self.image_owner_fn = image_owner_fn
+        self.image_owner_ln = image_owner_ln
         self.image_id = image_id
         self.image_filename = image_filename
         self.image_licence_type = image_licence_type
@@ -34,8 +35,11 @@ class Image:
     def get_image_title(self):
         return self.image_title
 
-    def get_image_owner(self):
-        return self.image_owner
+    def get_image_owner_fn(self):
+        return self.image_owner_fn
+
+    def get_image_owner_ln(self):
+        return self.image_owner_ln
 
     def get_image_licence_type(self):
         return self.image_licence_type
@@ -48,7 +52,7 @@ class GUI:
         window = Tk()
         window.title("Data Entry For Images Data")
         #setting root window and size
-        window.minsize(width=720, height=400)
+        window.minsize(width=980, height=510)
         window.configure(background='#B8FFB8')
 
         heading_label = Label(window, bg="black", fg="#B8FFB8", text="Images Data", font=("Footlight MT Light","24"), pady=20)
@@ -64,49 +68,55 @@ class GUI:
         image_title_label = Label(window, text='Image Title:', font=("Century","12"), bg="#B8FFB8", pady=15)
         image_title_label.grid(row=1, sticky=E)
         self.image_title_field = Entry(window, width=25)
-        self.image_title_field.grid(row=1, column=1, padx=15)
+        self.image_title_field.grid(row=1, column=1, sticky=W)
 
-        image_owner_label = Label(window, text='Owner Of Image:', font=("Century","12"), bg="#B8FFB8")
-        image_owner_label.grid(row=2, sticky=E)
-        self.image_owner_field = Entry(window, width=25)
-        self.image_owner_field.grid(row=2, column=1)
+        image_owner_fn_label = Label(window, text='Image Owner\'s First Name:', font=("Century","12"), bg="#B8FFB8")
+        image_owner_fn_label.grid(row=2, sticky=E)
+        self.image_owner_fn_field = Entry(window, width=25)
+        self.image_owner_fn_field.grid(row=2, column=1, sticky=W)
+
+        image_owner_ln_label = Label(window, text='Image Owner\'s Of Image Last Name:', font=("Century","12"), bg="#B8FFB8", pady=15)
+        image_owner_ln_label.grid(row=3, sticky=E)
+        self.image_owner_ln_field = Entry(window, width=25)
+        self.image_owner_ln_field.grid(row=3, column=1, sticky=W)
 
         image_id_label = Label(window, text='Image ID (Please enter at least 3 numberic values):', font=("Century","12"), bg="#B8FFB8", pady=15)
-        image_id_label.grid(row=3, sticky=E)
+        image_id_label.grid(row=4, sticky=E)
         self.image_id_field = Entry(window, width=25)
-        self.image_id_field.grid(row=3, column=1)
+        self.image_id_field.grid(row=4, column=1, sticky=W)
 
         image_filename_label = Label(window, text='Image Filename (including file extension):', font=("Century","12"), bg="#B8FFB8")
-        image_filename_label.grid(row=4, sticky=E)
+        image_filename_label.grid(row=5, sticky=E)
         self.image_filename_field = Entry(window, width=25)
-        self.image_filename_field.grid(row=4, column=1)
+        self.image_filename_field.grid(row=5, column=1, sticky=W)
 
         image_licence_type_label = Label(window, text='Select Image Licence Type:', font=("Century","12"), bg="#B8FFB8", pady=15)
-        image_licence_type_label.grid(row=5, sticky=E)
+        image_licence_type_label.grid(row=6, sticky=E)
         self.image_licence_type_field = StringVar()
         om = OptionMenu(window, self.image_licence_type_field, "Attribuution (BY)", "Share-Alike (SA)", "Non-Commercial (NC)", "No Derivative Works (ND)", "Non-Commercial - Share-Alike (NC-SA)", "Non-Commercial - No Derivative Works (NC-ND)")
-        om.config(bg="#D7FFD7", width=19)  # Set background color of button
+        #Set background color of button
+        om.config(bg="#D7FFD7", width=40) #set width to 40 so that the longer string lengths can be seen
         # Set background colour of drop down menu
         om["menu"].config(bg="#D7FFD7")
-        om.grid(row=5, column=1)
+        om.grid(row=6, column=1)
 
         #label for csv file create or append
         csv_label = Label(window, text='Do you want to create a new csv file? (Please enter "yes" or "no")', font=("Century","12"), bg="#B8FFB8")
-        csv_label.grid(row=6, sticky=E)
+        csv_label.grid(row=7, sticky=E)
         self.csv_field = Entry(window, width=25)
-        self.csv_field.grid(row=6, column=1)
+        self.csv_field.grid(row=7, column=1, sticky=W)
 
         #creates a button. The command function is run when the button is pressed
         #the 'command=self.doSubmit' is an example of a callback method
-        submit_button_label = Label(window, text='Press To Validate:', font=("Century","12"), bg="#B8FFB8")
+        submit_button_label = Label(window, text='Press To Validate:', font=("Century","12"), bg="#B8FFB8", pady=15)
         submit_button = Button(window, text='Submit', command=self.doSubmit, font=("Century","10"), bg="#D7FFD7", width=15)
 
-        csv_button_label = Label(window, text='Convert Record To CSV:', font=("Century","12"), bg="#B8FFB8", pady=15)
+        csv_button_label = Label(window, text='Convert Record To CSV:', font=("Century","12"), bg="#B8FFB8")
         csv_button = Button(window, text='Write To CSV', command=self.writetocsv, font=("Century","10"), bg="#D7FFD7", width=15)
-        submit_button_label.grid(row=7, sticky=E)
-        submit_button.grid(row=7, column=1)
-        csv_button_label.grid(row=8, sticky=E)
-        csv_button.grid(row=8, column=1)
+        submit_button_label.grid(row=8, sticky=E)
+        submit_button.grid(row=8, column=1, sticky=W)
+        csv_button_label.grid(row=9, sticky=E)
+        csv_button.grid(row=9, column=1, sticky=W)
 
         #waiting for user input - event driven program
         window.mainloop()
@@ -134,13 +144,13 @@ class GUI:
                 fn = os.path.splitext(fn)[-2]
 
         #this is the callback method for the 'Submit' button
-            if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_field.get()) <1 or len(self.image_licence_type_field.get()) <1 or len(self.csv_field.get()) <1:
+            if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_fn_field.get()) <1 or len(self.image_owner_ln_field.get()) <1 or len(self.image_licence_type_field.get()) <1 or len(self.csv_field.get()) <1:
                 tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields.')
             elif len(self.image_id_field.get()) < 3:
                 tkinter.messagebox.showwarning('Warning!','Please enter at least 3 numberic values for image ID.')
             #limits the user's input to 25 characters for image filename, image title and image owner
-            elif len(fn) > 25 or len(self.image_title_field.get()) > 25  or len(self.image_owner_field.get()) > 25:
-                tkinter.messagebox.showwarning('Warning!','Please enter less than 25 characters for image filename, image title and image owner.')
+            elif len(fn) > 25 or len(self.image_title_field.get()) > 25  or len(self.image_owner_fn_field.get()) > 25 or len(self.image_owner_ln_field.get()) > 25:
+                tkinter.messagebox.showwarning('Warning!','Please enter less than 25 characters for image filename, image title and image owner\'s first name and image owner\'s last name.')
 
             #only accepts the most common image file extentsions so that it is more easy to validate as users may input unacceptable image file extensions such as ".fjgl" or ".323j" etc.
             elif ext not in (".bmp", ".gif", ".jpg", ".png", ".psd", ".pspimage", ".thm", ".tif", ".yuv", ".ai", ".drw", ".eps", ".ps", ".svg", ".jpeg"):
@@ -156,7 +166,7 @@ class GUI:
                 try:
                     validated_image_id = int(self.image_id_field.get())
 
-                    self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get() , self.image_owner_field.get(), self.image_licence_type_field.get()))
+                    self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get() , self.image_owner_fn_field.get(), self.image_owner_ln_field.get(), self.image_licence_type_field.get()))
                     self.ready_to_write = True
                     self.csvfile = self.csv_field.get() #stores the self.csv_field.get() data before it is deleted
                     tkinter.messagebox.showinfo('Notice','Submission Sucessful.')
@@ -164,8 +174,10 @@ class GUI:
                     self.image_id_field.delete(0, END) #command to clear field
                     self.image_filename_field.delete(0, END)
                     self.image_title_field.delete(0, END)
-                    self.image_owner_field.delete(0, END)
+                    self.image_owner_fn_field.delete(0, END)
+                    self.image_owner_ln_field.delete(0, END)
                     self.csv_field.delete(0, END)
+                    self.image_licence_type_field.set("Please select Image Licence Type:")
 
                 except ValueError:
                     tkinter.messagebox.showwarning('Warning!','Please enter numeric image ID.')
@@ -190,7 +202,7 @@ class GUI:
             #cycles through list of records created by gui
             for record in self.recordlist:
                 print(record.get_image_id())
-                writer.writerow([record.get_image_title(), record.get_image_owner(), record.get_image_id(), record.get_image_filename(), record.get_image_licence_type()])
+                writer.writerow([record.get_image_title(), record.get_image_owner_fn(), record.get_image_owner_ln(), record.get_image_id(), record.get_image_filename(), record.get_image_licence_type()])
             #explicitly closes the output file
             ofile.close()
         else:
