@@ -190,7 +190,7 @@ class GUI:
 
         if self.ready_to_write: #cheacks data has been previously validated
             self.ready_to_write = True
-            if self.csv_field.get() == "no":
+            if self.csvfile == "no":
                 if os.path.isfile('image_database.txt'):#checks if file name exists
                     ofile = open(file_name, 'a') #adds data to file if file exists
                 else:
