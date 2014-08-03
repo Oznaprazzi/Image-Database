@@ -51,7 +51,7 @@ class GUI:
         window = Tk()
         window.title("Data Entry For Images Data")
         #setting root window and size
-        window.minsize(width=980, height=510)
+        window.minsize(width=750, height=510)
         window.configure(background='#B8FFB8')
 
         heading_label = Label(window, bg="black", fg="#B8FFB8", text="Images Data", font=("Footlight MT Light","24"), pady=20)
