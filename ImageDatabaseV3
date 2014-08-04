@@ -138,7 +138,7 @@ class GUI:
         file_name = 'image_database.txt'
 
         if self.ready_to_write: #cheacks data has been previously validated
-            ofile = open(file_name, 'a') #open with write('w') or append('a') privelages
+            ofile = open(file_name, 'w') #open with write('w') or append('a') privelages
             writer = csv.writer(ofile, delimiter=',')
             #cycles through list of records created by gui
             for record in self.recordlist:
