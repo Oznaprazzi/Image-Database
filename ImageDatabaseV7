@@ -100,10 +100,10 @@ class GUI:
         om.grid(row=6, column=1)
 
         #label for csv file create or append
-        csv_label = Label(window, text='Do you want to create a new csv file? (Please enter "yes" or "no")', font=("Century","12"), bg="#B8FFB8")
-        csv_label.grid(row=7, sticky=E)
-        self.csv_field = Entry(window, width=25)
-        self.csv_field.grid(row=7, column=1, sticky=W)
+        csvfile_label = Label(window, text='Do you want to create a new csv file? (Please enter "yes" or "no")', font=("Century","12"), bg="#B8FFB8")
+        csvfile_label.grid(row=7, sticky=E)
+        self.csvfile_field = Entry(window, width=25)
+        self.csvfile_field.grid(row=7, column=1, sticky=W)
 
         #creates a button. The command function is run when the button is pressed
         #the 'command=self.doSubmit' is an example of a call-back method
@@ -124,16 +124,16 @@ class GUI:
 
         #test uniqueness of each school name entered u
 
-        noduplicate = True;
-        if self.csv_field.get() == "no":
+        self.noduplicate = True;
+        if self.csvfile_field.get() == "no":
             for record in self.recordlist:
                 if self.image_id_field.get() == record.get_image_id():
-                    noduplicate= False
+                    self.noduplicate = False
                     tkinter.messagebox.showwarning('Warning!','Duplicate Image ID.');
                     print('Please enter Image ID again.');
             self.ready_to_write = False
 
-        if noduplicate == True:
+        if self.noduplicate == True:
 
             self.filenames = [self.image_filename_field.get()] #creates list of all image filenames entered so that the next code below is able to splits up the extension from the filename
 
@@ -143,7 +143,7 @@ class GUI:
                 fn = os.path.splitext(fn)[-2]
 
         #this is the call-back method for the 'Submit' button
-            if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_fn_field.get()) <1 or len(self.image_owner_ln_field.get()) <1 or len(self.image_licence_type_field.get()) <1 or len(self.csv_field.get()) <1:
+            if len(self.image_id_field.get()) <1 or len(self.image_filename_field.get()) <1 or len(self.image_title_field.get()) <1 or len(self.image_owner_fn_field.get()) <1 or len(self.image_owner_ln_field.get()) <1 or len(self.image_licence_type_field.get()) <1 or len(self.csvfile_field.get()) <1:
                 tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields.')
             elif len(self.image_id_field.get()) < 3:
                 tkinter.messagebox.showwarning('Warning!','Please enter at least 3 numeric values for image ID.')
@@ -157,9 +157,12 @@ class GUI:
             #does not allow the user to input "." in the filename unless it is the file extension.
             elif fn.find('.') != -1:
                 tkinter.messagebox.showwarning('Warning!','Please do not input "." into filename unless it is the file extension.')
-            #validates the input of self.csv_field - needs to be either "yes" or "no" in order to create or append .txt file
-            elif self.csv_field.get() not in ("yes", "no"):
+            #validates the input of self.csvfile_field - needs to be either "yes" or "no" in order to create or append .txt file
+            elif self.csvfile_field.get() not in ("yes", "no"):
                 tkinter.messagebox.showwarning('Warning!','Please enter "yes" or "no" for csv file creation.')
+
+            elif self.image_licence_type_field.get() == "Please select Image Licence Type:":
+                tkinter.messagebox.showwarning('Warning!','Please select Image Licence Type.')
 
             else:
                 try:
@@ -167,7 +170,7 @@ class GUI:
 
                     self.recordlist.append(Image(self.image_id_field.get(), self.image_filename_field.get(), self.image_title_field.get() , self.image_owner_fn_field.get(), self.image_owner_ln_field.get(), self.image_licence_type_field.get()))
                     self.ready_to_write = True
-                    self.csvfile = self.csv_field.get() #stores the self.csv_field.get() data before it is deleted
+                    self.csvfile = self.csvfile_field.get() #stores the self.csvfile_field.get() data before it is deleted
                     tkinter.messagebox.showinfo('Notice','Submission Successful.')
 
                     self.image_id_field.delete(0, END) #command to clear field
@@ -175,7 +178,7 @@ class GUI:
                     self.image_title_field.delete(0, END)
                     self.image_owner_fn_field.delete(0, END)
                     self.image_owner_ln_field.delete(0, END)
-                    self.csv_field.delete(0, END)
+                    self.csvfile_field.delete(0, END)
                     self.image_licence_type_field.set("Please select Image Licence Type:")
 
                 except ValueError:
@@ -187,21 +190,22 @@ class GUI:
         import csv
         file_name = 'image_database.txt'
 
-        if self.ready_to_write: #cheacks data has been previously validated
+        if self.ready_to_write: #checks data has been previously validated
             self.ready_to_write = True
             if self.csvfile == "no":
                 if os.path.isfile('image_database.txt'):#checks if file name exists
                     ofile = open(file_name, 'a') #adds data to file if file exists
                 else:
                     ofile = open(file_name, 'w') #creates file if file does not existsofile = open(file_name, 'a') #adds data to file if file exists
-            else:
-                ofile = open(file_name, 'w') #creates file if user's input for csv_field is "yes"
+            elif self.csvfile == "yes":
+                ofile = open(file_name, 'w')#creates file if user's input for csvfile_field is "yes"
 
             writer = csv.writer(ofile, delimiter=',')
             #cycles through list of records created by GUI
-            for record in self.recordlist:
-                print(record.get_image_id())
-                writer.writerow([record.get_image_title(), record.get_image_owner_fn(), record.get_image_owner_ln(), record.get_image_id(), record.get_image_filename(), record.get_image_licence_type()])
+            if self.noduplicate == True: #only writes record if there is no duplicate
+                for record in self.recordlist:
+                    print(record.get_image_id())
+                    writer.writerow([record.get_image_title(), record.get_image_owner_fn(), record.get_image_owner_ln(), record.get_image_id(), record.get_image_filename(), record.get_image_licence_type()])
             #explicitly closes the output file
             ofile.close()
         else:
@@ -212,6 +216,7 @@ class GUI:
             tkinter.messagebox.showinfo('Notice',file_name+' File Generated Successfully!') #shows message if the user wants to create a new file
         elif self.ready_to_write and self.csvfile == "no":
             tkinter.messagebox.showinfo('Notice', 'Data added to '+file_name+' Successfully!') #shows message if the user does not want to create a new file but add the data to the existing file
+
 
 #initialises the programme
 GUI()
