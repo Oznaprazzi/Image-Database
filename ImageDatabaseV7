@@ -122,7 +122,7 @@ class GUI:
 
     def doSubmit(self):
 
-        #test uniqueness of each image ID the user inputs
+        #tests uniqueness of each image ID the user inputs
 
         self.noduplicate = True;
         if self.csvfile_field.get() == "no":
